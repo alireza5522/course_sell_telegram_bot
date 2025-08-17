@@ -1,0 +1,20 @@
+sudo apt update && sudo apt upgrade -y
+
+sudo apt install -y python3 python3-pip python3-venv build-essential unzip curl wget git libffi-dev libssl-dev redis-server
+
+sudo systemctl enable redis-server
+sudo systemctl start redis-server
+sudo systemctl status redis-server
+
+PROJECT_DIR="$HOME/telegram_bot"
+mkdir -p "$PROJECT_DIR"
+cd "$PROJECT_DIR"
+
+python3 -m venv venv
+source venv/bin/activate
+
+pip install --upgrade pip
+
+pip install -r requirements.txt
+
+echo download the code and use: nohup python3 index.py &

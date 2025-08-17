@@ -1,0 +1,26 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+env/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Keys folder (sensitive)
+keys/
+
+# Optional: compiled files
+*.so
+*.pyd
+
+# Redis database files (if any local)
+dump.rdb
+*.session
+*.session-journal
