@@ -29,7 +29,9 @@ git clone https://github.com/alireza5522/course_sell_telegram_bot
 cd course_sell_telegram_bot
 ### 4. ایجاد محیط مجازی و نصب وابستگی‌ها
 python3 -m venv venv
+
 source venv/bin/activate
+
 pip install -r requirements.txt
 ### 5. پیکربندی کلیدهای API
 
