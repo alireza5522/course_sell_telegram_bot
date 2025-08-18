@@ -30,6 +30,11 @@ def backkeyboard(info):
         [InlineKeyboardButton("برگشت", callback_data=f'back:{info[1]}:{info[2]}:{info[3]}')],
     ])
 
+def homekeyboard():
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("برگشت", callback_data=f'home')],
+    ])
+
 def requestphone():
     return ReplyKeyboardMarkup(
         [[KeyboardButton("اشتراک گذاری شماره",request_contact=True)]],

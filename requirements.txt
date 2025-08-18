@@ -2,3 +2,4 @@ Kurigram
 tgcrypto
 redis
 pandas
+pympler

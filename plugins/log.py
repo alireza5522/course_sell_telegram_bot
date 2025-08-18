@@ -19,7 +19,6 @@ console_handler.setLevel(logging.INFO)
 logger = logging.getLogger("TelegramBot")
 logger.setLevel(logging.INFO)
 
-# جلوگیری از اضافه شدن هندلرها دوباره در صورت ایمپورت چندباره
 if not logger.handlers:
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)

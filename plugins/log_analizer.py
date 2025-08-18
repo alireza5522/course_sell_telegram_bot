@@ -39,16 +39,34 @@ def analyze_logs(log_file="bot.log"):
     df_banned = pd.DataFrame(data["banned"])
     df_errors = pd.DataFrame(data["errors"])
 
+    # کاربران یکتا
+    unique_users = df_callbacks["user"].nunique() if not df_callbacks.empty else 0
+
+    # کاربران فعال‌تر
+    top_users = (
+        df_callbacks["user"].value_counts().head(5).to_string()
+        if not df_callbacks.empty else "none"
+    )
+
+    # دکمه‌های پرکلیک
+    top_buttons = (
+        df_callbacks["data"].value_counts().head(5).to_string()
+        if not df_callbacks.empty else "none"
+    )
+
     # گزارش نهایی
     report = f"""
 📊 گزارش نهایی
 
-تعداد کلیک‌ها: {len(df_callbacks)}
+🔹 تعداد کل کلیک‌ها: {len(df_callbacks)}
+🔹 تعداد کاربران منحصربه‌فرد: {unique_users}
+🔹 تعداد کاربران بن‌شده: {len(df_banned)}
+🔹 تعداد خطاها: {len(df_errors)}
 
-بیشترین دکمه‌های کلیک‌ شده:
-{(df_callbacks['data'].value_counts().head(5)) if not df_callbacks.empty else 'none'}
+👥 کاربران فعال‌تر (Top 5):
+{top_users}
 
-تعداد کاربران بن‌شده: {len(df_banned)}
-تعداد خطاها: {len(df_errors)}
+🎯 دکمه‌های پرکلیک (Top 5):
+{top_buttons}
 """
     return report

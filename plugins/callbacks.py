@@ -21,32 +21,26 @@ async def callback_query(c:Client, callback_query: CallbackQuery):
     try:
         if data.startswith("cousrse") or data.startswith("back"):
             info = data.split(":")
-            await c.delete_messages(chat_id=message.chat.id,message_ids=message.id)
-            await c.copy_message(chat_id=message.chat.id,from_chat_id=CHANNEL,message_id=int(info[1]),reply_markup=coursekeyboard(info))
-        
+            await send_massage(c,message,int(info[1]),coursekeyboard(info),True)
+
         elif data.startswith("topics"):
             info = data.split(":")
-            await c.delete_messages(chat_id=message.chat.id,message_ids=message.id)
-            await c.copy_message(chat_id=message.chat.id,from_chat_id=CHANNEL,message_id=int(info[2]),reply_markup=pagekeyboard(info))
-        
+            await send_massage(c,message,int(info[2]),pagekeyboard(info),True)
+
         elif data.startswith("video"):
             info = data.split(":")
-            await c.delete_messages(chat_id=message.chat.id,message_ids=message.id)
-            await c.copy_message(chat_id=message.chat.id,from_chat_id=CHANNEL,message_id=int(info[3]),reply_markup=pagekeyboard(info))
-        
+            await send_massage(c,message,int(info[3]),pagekeyboard(info),True)
+
         elif data.startswith("home"):
             info = await user_data.get_key("core")
-            await c.delete_messages(chat_id=message.chat.id,message_ids=message.id)
-            await c.copy_message(chat_id=message.chat.id,from_chat_id=CHANNEL,message_id=WELCOME,reply_markup=createkeyboard(info))
+            await send_massage(c,message,WELCOME,createkeyboard(info),True)
 
         elif data.startswith("buy"):
             info = data.split(":")
-            await c.delete_messages(chat_id=message.chat.id,message_ids=message.id)
-            await c.copy_message(chat_id=message.chat.id,from_chat_id=CHANNEL,message_id=BUY,reply_markup=backkeyboard(info))
-        
+            await send_massage(c,message,BUY,backkeyboard(info),True)
+
         elif data.startswith("requestnumber"):
-            await c.delete_messages(chat_id=message.chat.id,message_ids=message.id)
-            await c.copy_message(chat_id=message.chat.id,from_chat_id=CHANNEL,message_id=NUMBER,reply_markup=requestphone())
+            await send_massage(c,message,NUMBER,requestphone(),True)
 
     except Exception as e:
         logger.error(

@@ -7,6 +7,8 @@ from plugins.redismanager import user_data
 from keys.keys import *
 from plugins.log import logger
 from .log_analizer import analyze_logs
+from .functions import *
+from pympler import asizeof
 
 @Client.on_message(filters.command('adminstart') & filters.private) 
 async def adminstart_handel(c:Client,m:Message):
@@ -24,8 +26,13 @@ async def adminstart_handel(c:Client,m:Message):
           logger.info("Connected to Redis (DB=0)")
 
      try:
-          text = await c.get_messages(chat_id=CHANNEL,message_ids=MESSAGGE)
-          await user_data.set_key("core",text.text,None)
+          m_WELCOME,m_MESSAGGE,m_BUY,m_NUMBER = await c.get_messages(chat_id=CHANNEL,message_ids=[WELCOME,MESSAGGE,BUY,NUMBER])
+
+          await user_data.set_key("core",m_MESSAGGE.text,None)
+          message_store_action("set",WELCOME,m_WELCOME)
+          message_store_action("set",BUY,m_BUY)
+          message_store_action("set",NUMBER,m_NUMBER)
+          
           await m.reply_text(text='Done')
           logger.info("✅ Admin core data updated successfully")
      except Exception as e:
@@ -35,11 +42,12 @@ async def adminstart_handel(c:Client,m:Message):
 
 @Client.on_message(filters.command("start") & filters.private & ban_check())
 async def start_handel(c:Client,m:Message):
+
      user = m.from_user
      logger.info(f"📌 /start | UserID={user.id} | Username=@{user.username} | Name={user.first_name}")
      try:
           info = await user_data.get_key("core")
-          await c.copy_message(chat_id=user.id,from_chat_id=CHANNEL,message_id=WELCOME,reply_markup=createkeyboard(info))
+          await send_massage(c,m,WELCOME,createkeyboard(info))
 
      except Exception as e:
           logger.error(f"❌ Error in start_handel | UserID={user.id}", exc_info=True)
@@ -55,16 +63,13 @@ async def handle_contact(c:Client, m: Message):
      try:
           # ارسال شماره برای ادمین جهت تایید
           if not str(phone).startswith("+98"):
-               await m.reply_text(text='شماره مورد نظر باید شماره ایران باشد\nلطفا با شماره اکانتی که شماره ایران دارد افدام به خرید کنید')
+               await m.reply_text(text='شماره مورد نظر باید شماره ایران باشد\nلطفا با شماره اکانتی که شماره ایران دارد افدام به خرید کنید',reply_markup=homekeyboard())
           else:
-               await m.reply_text(text='شماره شما به اشتراک گذاشته شد')
+               await m.reply_text(text='شماره شما به اشتراک گذاشته شد',reply_markup=homekeyboard())
 
           text = f"contanct: {phone}\nchat_id: {user.id}\nusernmae: {user.username}\nname: {user.first_name}"
           await c.send_message(chat_id=ADMIN,text=text)
-
-          info = await user_data.get_key("core")
-          await c.copy_message(chat_id=user.id,from_chat_id=CHANNEL,message_id=WELCOME,reply_markup=createkeyboard(info))
-
+          
      except Exception as e:
           logger.error(f"❌ Error in handle_contact | UserID={user.id}", exc_info=True)
           raise e
@@ -96,5 +101,12 @@ async def text_handle(c:Client,m:Message):
           report = analyze_logs(LOG_FILE)
           await m.reply_text(report)
 
+     elif m.text.startswith('clear'):
+          message_store_action('clear')
+          await m.reply_text(text=f'done clear')
+
+     elif m.text.startswith('size'):
+          await m.reply_text(text=f'{asizeof.asizeof(message_store_action('all'))}')
+
      elif m.text.startswith('help'):
-          await m.reply_text(text=f'ban chat_id\nstatus')
+          await m.reply_text(text=f'ban chat_id\nstatus\nclear\nsize')
