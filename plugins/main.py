@@ -19,20 +19,15 @@ async def adminstart_handel(c:Client,m:Message):
      if m.from_user.id != ADMIN:
           logger.warning(f"Unauthorized attempt to use /adminstart by UserID={user.id}")
           return
-     
+
      if user_data.isconnected == False:
           await user_data.connect()
           await user_data.select_db(0)
           logger.info("Connected to Redis (DB=0)")
 
      try:
-          m_WELCOME,m_MESSAGGE,m_BUY,m_NUMBER = await c.get_messages(chat_id=CHANNEL,message_ids=[WELCOME,MESSAGGE,BUY,NUMBER])
+          await store_messages(c)
 
-          await user_data.set_key("core",m_MESSAGGE.text,None)
-          message_store_action("set",WELCOME,m_WELCOME)
-          message_store_action("set",BUY,m_BUY)
-          message_store_action("set",NUMBER,m_NUMBER)
-          
           await m.reply_text(text='Done')
           logger.info("✅ Admin core data updated successfully")
      except Exception as e:
@@ -62,10 +57,10 @@ async def handle_contact(c:Client, m: Message):
 
      try:
           # ارسال شماره برای ادمین جهت تایید
-          if not str(phone).startswith("+98"):
-               await m.reply_text(text='شماره مورد نظر باید شماره ایران باشد\nلطفا با شماره اکانتی که شماره ایران دارد افدام به خرید کنید',reply_markup=homekeyboard())
+          if not str(phone).startswith("+98") and not str(phone).startswith("98"):
+               await m.reply_text(text='شماره مورد نظر باید شماره ایران باشد\nلطفا با شماره اکانتی که شماره ایران دارد افدام به خرید کنید\nدرصورتی که شماره ایران به اشتراک گذاشتید این پیام رو نادیده بگیرید',reply_markup=homekeyboard())
           else:
-               await m.reply_text(text='شماره شما به اشتراک گذاشته شد',reply_markup=homekeyboard())
+               await m.reply_text(text=f'شماره شما تایید شد\n\nمیتونید از این لینک اقدام به پرداخت کنید\n\n{PAY_LINK}',reply_markup=homekeyboard(),link_preview_options=LinkPreviewOptions(is_disabled=True))
 
           text = f"contanct: {phone}\nchat_id: {user.id}\nusernmae: {user.username}\nname: {user.first_name}"
           await c.send_message(chat_id=ADMIN,text=text)

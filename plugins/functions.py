@@ -6,6 +6,12 @@ import json
 import pyrogram
 import datetime
 
+def ban_check():
+    async def func(flt, c:Client, m:Message):
+        try: return (await user_data.get_key(str(m.from_user.id))) != 'ban'
+        except: return True
+    return filters.create(func)
+
 message_store = {}
 
 def message_store_action(action, key=None, value=None):
@@ -41,11 +47,14 @@ def message_store_action(action, key=None, value=None):
     else:
         raise ValueError("Action یا پارامترها اشتباه هستن.")
 
-def ban_check():
-    async def func(flt, c:Client, m:Message):
-        try: return (await user_data.get_key(str(m.from_user.id))) != 'ban'
-        except: return True
-    return filters.create(func)
+
+async def store_messages(c):
+    m_WELCOME,m_MESSAGGE,m_BUY,m_NUMBER = await c.get_messages(chat_id=CHANNEL,message_ids=[WELCOME,MESSAGGE,BUY,NUMBER])
+
+    await user_data.set_key("core",m_MESSAGGE.text,None)
+    message_store_action("set",WELCOME,m_WELCOME)
+    message_store_action("set",BUY,m_BUY)
+    message_store_action("set",NUMBER,m_NUMBER)
 
 async def send_massage(c,m,message_id,keyboard,delete=False):
     try:
@@ -75,5 +84,3 @@ async def send_massage(c,m,message_id,keyboard,delete=False):
     except:
         await c.copy_message(chat_id=m.from_user.id,from_chat_id=CHANNEL,message_id=message_id,reply_markup=keyboard)
         message_store_action('clear')
-
-

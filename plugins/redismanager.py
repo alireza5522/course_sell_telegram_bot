@@ -75,6 +75,23 @@ class RedisManager:
         except Exception as e:
             logger.error("❌ Error closing Redis connection", exc_info=True)
             raise e
+        
+    async def flushdb(self):
+        try:
+            await self.client.flushdb()
+            logger.info("✅ Flushed current Redis DB")
+        except Exception as e:
+            logger.error("❌ Error flushing current Redis DB", exc_info=True)
+            raise e
+
+    async def flushall(self):
+        try:
+            await self.client.flushall()
+            logger.info("✅ Flushed ALL Redis databases")
+        except Exception as e:
+            logger.error("❌ Error flushing ALL Redis databases", exc_info=True)
+            raise e
+
 
 
 user_data = RedisManager()
